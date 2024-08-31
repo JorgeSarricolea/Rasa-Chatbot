@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Chatbot de Rasa</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        font-size: 14px;
+        position: relative;
+      }
+      #chat-container {
+        width: 300px;
+        height: 400px;
+        margin: 50px auto;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        padding: 10px;
+        background-color: #f9f9f9;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+      }
+      #chat-box {
+        flex: 1;
+        width: 100%;
+        overflow-y: scroll;
+        padding: 10px;
+      }
+      .message-container {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        margin-bottom: 10px;
+      }
+      .user-message {
+        background-color: #dcf8c6;
+        color: #333;
+        border-radius: 10px;
+        padding: 6px 10px;
+        max-width: 100%;
+        align-self: flex-end;
+        word-wrap: break-word;
+        white-space: pre-wrap; /* Preserva los saltos de línea y espacios */
+        overflow-wrap: break-word; /* Asegura el ajuste de palabras */
+      }
+      .bot-message {
+        background-color: #96c8fe;
+        color: #333;
+        border-radius: 10px;
+        padding: 6px 10px;
+        max-width: 100%;
+        align-self: flex-start;
+        word-wrap: break-word;
+        white-space: pre-wrap; /* Preserva los saltos de línea y espacios */
+        overflow-wrap: break-word; /* Asegura el ajuste de palabras */
+      }
+      #user-input {
+        width: calc(100% - 80px);
+        padding: 4px;
+        margin-right: 5px;
+        border-radius: 5px;
+        border: 1px solid #ccc;
+        outline: none;
+        font-size: 14px;
+      }
+      #send-button,
+      #audio-button {
+        width: 70px;
+        padding: 6px;
+        border: none;
+        border-radius: 5px;
+        background-color: #007bff;
+        color: #fff;
+        cursor: pointer;
+        margin: 10px;
+        font-size: 14px;
+      }
+      #send-button:hover,
+      #audio-button:hover {
+        background-color: #0056b3;
+      }
+      #restart-icon {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        cursor: pointer;
+        width: 30px;
+        height: 30px;
+      }
+      #restart-icon:hover {
+        opacity: 0.8;
+      }
+      #logo {
+        max-width: 50px;
+        height: auto;
+        margin-bottom: 10px;
+        display: block;
+      }
+      .bot-image,
+      .user-image {
+        max-width: 100%;
+        height: auto;
+        border-radius: 10px;
+        margin-top: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="chat-container">
+      <img src="/static/thuban_logo.png" alt="Logo" id="logo" />
+      <div id="chat-box"></div>
+      <input type="text" id="user-input" placeholder="Escribe un mensaje..." />
+      <button id="send-button">Enviar</button>
+      <button id="audio-button" onclick="startRecording()">🎙️</button>
+    </div>
+    <svg
+      id="restart-icon"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+      onclick="restartConversation()"
+    >
+      <path
+        fill-rule="evenodd"
+        clip-rule="evenodd"
+        d="M16.5 11.5V9C16.5 8.72386 16.2761 8.5 16 8.5H10.619L12.5595 10.4405C12.7549 10.6359 12.7549 10.9528 12.5595 11.1482C12.4645 11.2432 12.3327 11.2962 12.2001 11.2962C12.0676 11.2962 11.9358 11.2432 11.8408 11.1482L8.34079 7.64817C8.14538 7.45276 8.14538 7.13586 8.34079 6.94045C8.5362 6.74504 8.8531 6.74504 9.04851 6.94045L12.5485 10.4405C12.7439 10.6359 12.7439 10.9528 12.5485 11.1482L10.619 13H16C16.2761 13 16.5 12.7761 16.5 12.5V11.5ZM12 1C6.19682 1 1.5 5.69682 1.5 11.5C1.5 17.3032 6.19682 22 12 22C17.8032 22 22.5 17.3032 22.5 11.5C22.5 5.69682 17.8032 1 12 1ZM12 20C7.58172 20 4 16.4183 4 12C4 7.58172 7.58172 4 12 4C16.4183 4 20 7.58172 20 12C20 16.4183 16.4183 20 12 20Z"
+        fill="#007BFF"
+      />
+    </svg>
+    <script>
+      function startRecording() {
+        const recognition = new webkitSpeechRecognition();
+        recognition.lang = "es";
+        recognition.interimResults = false;
+        recognition.maxAlternatives = 1;
+
+        recognition.onresult = function (event) {
+          const transcript = event.results[0][0].transcript;
+          console.log("Transcripción:", transcript);
+          sendMessage(transcript);
+        };
+
+        recognition.onerror = function (event) {
+          console.error("Error en el reconocimiento de voz:", event.error);
+        };
+
+        recognition.start();
+      }
+
+      function sendMessage(message) {
+        appendMessage({ text: message }, "user");
+        fetch(location.href + "/get_bot_response", {
+          // fetch("http://127.0.0.1:5000/webhooks/rest/webhook", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "http://127.0.0.1:5000",
+            "Access-Control-Allow-Credentials": "true",
+          },
+          body: JSON.stringify({
+            sender: "user",
+            message: message,
+          }),
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            data.forEach((message) => {
+              appendMessage(message, "bot");
+            });
+          })
+          .catch((error) => console.error("Error:", error));
+      }
+
+      function appendMessage(message, sender) {
+        var chatBox = document.getElementById("chat-box");
+        var messageContainer = document.createElement("div");
+        var messageDiv = document.createElement("div");
+
+        messageDiv.innerHTML = message.text.replace(/\n/g, "<br>");
+
+        messageDiv.textContent = message.text;
+        messageContainer.appendChild(messageDiv);
+        messageContainer.className = "message-container";
+        messageDiv.className =
+          sender === "user" ? "user-message" : "bot-message";
+
+        if (message.audio) {
+          var audioElement = document.createElement("audio");
+          audioElement.src = message.audio;
+          audioElement.controls = true;
+          messageContainer.appendChild(audioElement);
+        }
+
+        if (message.image) {
+          var imageElement = document.createElement("img");
+          imageElement.src = message.image;
+          imageElement.className =
+            sender === "bot" ? "bot-image" : "user-image";
+          messageContainer.appendChild(imageElement);
+        }
+
+        chatBox.appendChild(messageContainer);
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        if (sender === "bot") {
+          speakMessage(message.text);
+        }
+      }
+
+      function speakMessage(message) {
+        var msg = new SpeechSynthesisUtterance(message);
+        msg.lang = "en-EN";
+        msg.onend = function (event) {
+          console.log("Habla finalizada");
+          startRecording(); // Activa el micrófono después de que se lea el mensaje
+        };
+        window.speechSynthesis.speak(msg);
+      }
+
+      function restartConversation() {
+        fetch("http://127.0.0.1:5000/restart_conversation", {
+          method: "POST",
+        })
+          .then((response) => response.json())
+          .then((data) => {
+            document.getElementById("chat-box").innerHTML = "";
+            appendMessage({ text: "Welcome!" }, "bot");
+          })
+          .catch((error) => console.error("Error:", error));
+      }
+
+      document.getElementById("send-button").addEventListener("click", () => {
+        const userInput = document.getElementById("user-input").value;
+        if (userInput.trim() !== "") {
+          sendMessage(userInput);
+          document.getElementById("user-input").value = "";
+        }
+      });
+
+      document
+        .getElementById("user-input")
+        .addEventListener("keypress", (event) => {
+          if (event.key === "Enter") {
+            const userInput = document.getElementById("user-input").value;
+            if (userInput.trim() !== "") {
+              sendMessage(userInput);
+              document.getElementById("user-input").value = "";
+            }
+          }
+        });
+
+      window.onload = function () {
+        var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        if (isMobile) {
+          document.getElementById("chat-container").style.height = "300px";
+        }
+      };
+    </script>
+  </body>
+</html>
