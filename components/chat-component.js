@@ -169,7 +169,9 @@ class ChatComponent extends LitElement {
             @keydown="${this.handleKeyDown}"
             placeholder="Escribe un mensaje..."
           />
-          <button id="send-button" @click="${this.sendMessage}">Enviar</button>
+          <button id="send-button" @click="${() => this.sendMessage()}">
+            Enviar
+          </button>
           <button id="audio-button" @click="${this.startRecording}">🎙️</button>
         </div>
       </div>
@@ -202,7 +204,6 @@ class ChatComponent extends LitElement {
       })
         .then((response) => response.json())
         .then((data) => {
-          console.log("Respuesta del bot:", data);
           if (Array.isArray(data)) {
             data.forEach((message) => {
               this.appendMessage(message, "bot");
@@ -245,7 +246,6 @@ class ChatComponent extends LitElement {
 
     recognition.onerror = (event) => {
       console.error("Voice recognition error:", event.error);
-      alert("Voice recognition error. Please try again.");
     };
 
     recognition.start();
