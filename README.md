@@ -90,10 +90,13 @@ npm run start
 
 ## Features
 
-**- Responsive Design:** The chatbot is designed to be fully responsive and functional on various device sizes.
-**- Web Components:** Utilizes the Lit framework to build modern, reusable web components.
-**- Rasa Integration:** Seamless integration with the Rasa framework for natural language understanding and dialogue management.
-**- Dockerized Environment:** Easily deploy and run the chatbot using Docker containers.
+- **Responsive Design:** The chatbot is designed to be fully responsive and functional on various device sizes.
+
+- **Web Components:** Utilizes the Lit framework to build modern, reusable web components.
+
+- **Rasa Integration:** Seamless integration with the Rasa framework for natural language understanding and dialogue management.
+
+- **Dockerized Environment:** Easily deploy and run the chatbot using Docker containers.
 
 ## Copyright
 
