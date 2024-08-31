@@ -166,11 +166,10 @@ class ChatComponent extends LitElement {
             id="user-input"
             .value="${this.userInput}"
             @input="${this.handleInput}"
+            @keydown="${this.handleKeyDown}"
             placeholder="Escribe un mensaje..."
           />
-          <button id="send-button" @click="${() => this.sendMessage()}">
-            Enviar
-          </button>
+          <button id="send-button" @click="${this.sendMessage}">Enviar</button>
           <button id="audio-button" @click="${this.startRecording}">🎙️</button>
         </div>
       </div>
@@ -181,12 +180,16 @@ class ChatComponent extends LitElement {
     this.userInput = event.target.value;
   }
 
-  sendMessage(message = this.userInput) {
-    if (typeof message !== "string") {
-      message = String(message);
+  handleKeyDown(event) {
+    if (event.key === "Enter") {
+      this.sendMessage();
     }
+  }
 
-    if (message.trim() !== "") {
+  sendMessage() {
+    const message = this.userInput.trim();
+
+    if (message !== "") {
       this.appendMessage({ text: message, sender: "user" });
       fetch(`http://127.0.0.1:5000/get_bot_response`, {
         method: "POST",
@@ -206,12 +209,13 @@ class ChatComponent extends LitElement {
           });
         })
         .catch((error) => console.error("Error:", error));
-      this.userInput = "";
     }
+
+    this.userInput = "";
+    this.requestUpdate();
   }
 
   appendMessage(message, sender) {
-    // Aquí se utiliza el `sender` para determinar la clase CSS
     this.messages = [...this.messages, { text: message.text, sender: sender }];
     this.requestUpdate();
   }
