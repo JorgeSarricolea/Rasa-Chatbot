@@ -18,6 +18,8 @@ Chatbot powered by Rasa, minimalista, diseño responsivo
 
 Este proyecto es un refactor de un chat bot, migrando de tecnologías (Flask a Node.js), con el principal objetivo de replicar las mismas funcionalidades, mejorar el diseño de interfaces y utilizar web compoents como el framework Lit, Building on top of the Web Components standards, Lit adds just what you need to be happy and productive: reactivity, declarative templates and a handful of thoughtful features to reduce boilerplate and make your job easier. Every Lit feature is carefully designed with web platform evolution in mind.
 
+The original project in Flask is included in the flask folder, containing files: app.py and index.html.
+
 ## Getting Started
 
 To get started with "Node-Rasa-Chabot-Thuban", follow these simple steps:
