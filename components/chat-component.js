@@ -136,7 +136,10 @@ class ChatComponent extends LitElement {
     return html`
       <div id="chat-container">
         <div class="header-container">
-          <img src="/static/thuban_logo.png" alt="Logo" id="logo" />
+          <div style="display: flex; align-items: center;">
+            <img src="/static/thuban_logo.png" alt="Logo" id="logo" />
+            <p style="color: #333">Chat Bot Thuban</p>
+          </div>
           <button @click="${this.restartConversation}">Reset</button>
         </div>
         <div id="chat-box">
@@ -240,15 +243,8 @@ class ChatComponent extends LitElement {
   }
 
   restartConversation() {
-    fetch(`${window.location.origin}/restart_conversation`, {
-      method: "POST",
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        this.messages = [];
-        this.appendMessage({ text: "Welcome!", sender: "bot" });
-      })
-      .catch((error) => console.error("Error:", error));
+    this.messages = [];
+    this.requestUpdate();
   }
 }
 
