@@ -1,10 +1,10 @@
-# Node-Rasa-Chatbot-Thuban
+# Rasa-Chatbot
 
 Chatbot powered by Rasa, minimalista, diseño responsivo
 
 ## Table of Contents
 
-- [Node-Rasa-Chatbot-Thuban](#node-rasa-chatbot-thuban)
+- [Rasa-Chatbot](#rasa-chatbot)
   - [Table of Contents](#table-of-contents)
   - [Introduction](#introduction)
   - [Getting Started](#getting-started)
@@ -22,7 +22,7 @@ The original project in Flask is included in the flask folder, containing files:
 
 ## Getting Started
 
-To get started with "Node-Rasa-Chabot-Thuban", follow these simple steps:
+To get started with "Rasa-Chabot", follow these simple steps:
 
 > [!TIP]
 > I recommend installing Node Version Manager and using the stable version.
@@ -52,13 +52,13 @@ node -v
 1. Clone the repository to your local machine:
 
 ```
-git clone https://github.com/JorgeSarricolea/Node-Rasa-Chatbot-Thuban
+git clone https://github.com/JorgeSarricolea/Rasa-Chatbot
 ```
 
 2. Navigate to the project directory:
 
 ```
-cd Node-Rasa-Chatbot-Thuban
+cd Rasa-Chatbot
 ```
 
 3. Install Node dependencies:
