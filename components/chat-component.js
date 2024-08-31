@@ -186,11 +186,10 @@ class ChatComponent extends LitElement {
     }
   }
 
-  sendMessage() {
-    const message = this.userInput.trim();
-
+  sendMessage(message = this.userInput.trim()) {
     if (message !== "") {
       this.appendMessage({ text: message, sender: "user" });
+
       fetch(`http://127.0.0.1:5000/get_bot_response`, {
         method: "POST",
         headers: {
@@ -203,10 +202,15 @@ class ChatComponent extends LitElement {
       })
         .then((response) => response.json())
         .then((data) => {
-          data.forEach((message) => {
-            this.appendMessage(message, "bot");
-            this.speakMessage(message.text);
-          });
+          console.log("Respuesta del bot:", data);
+          if (Array.isArray(data)) {
+            data.forEach((message) => {
+              this.appendMessage(message, "bot");
+              this.speakMessage(message.text);
+            });
+          } else {
+            console.error("El formato de la respuesta no es un array:", data);
+          }
         })
         .catch((error) => console.error("Error:", error));
     }
@@ -221,20 +225,27 @@ class ChatComponent extends LitElement {
   }
 
   startRecording() {
-    const recognition = new (window.SpeechRecognition ||
-      window.webkitSpeechRecognition)();
-    recognition.lang = "en";
+    const SpeechRecognition =
+      window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    if (!SpeechRecognition) {
+      alert("Speech recognition is not supported in this browser.");
+      return;
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.lang = "es";
     recognition.interimResults = false;
     recognition.maxAlternatives = 1;
 
     recognition.onresult = (event) => {
       const transcript = event.results[0][0].transcript;
-      console.log("Transcripción:", transcript);
       this.sendMessage(transcript);
     };
 
     recognition.onerror = (event) => {
-      console.error("Error en el reconocimiento de voz:", event.error);
+      console.error("Voice recognition error:", event.error);
+      alert("Voice recognition error. Please try again.");
     };
 
     recognition.start();
