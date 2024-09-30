@@ -16,7 +16,7 @@ Chatbot powered by Rasa, minimalista, diseño responsivo
 
 ## Introduction
 
-Este proyecto es un refactor de un chat bot, migrando de tecnologías (Flask a Node.js), con el principal objetivo de replicar las mismas funcionalidades, mejorar el diseño de interfaces y utilizar web compoents como el framework Lit, Building on top of the Web Components standards, Lit adds just what you need to be happy and productive: reactivity, declarative templates and a handful of thoughtful features to reduce boilerplate and make your job easier. Every Lit feature is carefully designed with web platform evolution in mind.
+This project is a refactor of a chatbot, migrating from technologies (Flask to Node.js), with the main goal of replicating the same functionalities, improving the interface design, and using web components like the Lit framework. Building on top of the Web Components standards, Lit adds just what you need to be happy and productive: reactivity, declarative templates, and a handful of thoughtful features to reduce boilerplate and make your job easier. Every Lit feature is carefully designed with web platform evolution in mind.
 
 The original project in Flask is included in the flask folder, containing files: app.py and index.html.
 
